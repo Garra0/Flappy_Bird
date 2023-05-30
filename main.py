@@ -63,13 +63,13 @@ pillar_down_index =[]
 for i in range(0,4):
     # 30m to know that , i must use 'copy()' thanks chat GPT.
     pillar_down_index.append(start_down.copy())
-    start_down.x+=250
+    start_down.x+=250+pirral_x/4
 
 # make list for the up pillar
 pillar_up_index =[]
 for i in range(0,4):
     pillar_up_index.append(start_up.copy())
-    start_up.x+=250
+    start_up.x+=250+pirral_x/4
 
 
 while True:
@@ -106,15 +106,25 @@ while True:
     # restart the pillars when leave the screen
     for i in range(0,4):
         s = random.randint(70, 320)
-        if pillar_down_index[i].x <= 0:
+        if pillar_down_index[i].x <= 0-pirral_x/2:
             pillar_down_index[i].bottom= s
             pillar_down_index[i].x=1000
             # pillar_down_index[i].y += s
 
-        if pillar_up_index[i].x <= 0:
+        if pillar_up_index[i].x <= 0-pirral_x/2:
             pillar_up_index[i].y = s+120
             pillar_up_index[i].x=1000
             # pillar_up_index[i].y += s
+
+
+    # if happen colliderect
+    for i in range(0, 4):
+        # colliderect fun return 1 if happen hit or ..
+        if bird_index.colliderect(pillar_down_index[i]) or bird_index.colliderect(pillar_up_index[i]):
+            print('ddd')
+
+
+
 
 
 
