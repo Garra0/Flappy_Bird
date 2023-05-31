@@ -3,6 +3,17 @@ import pygame
 from sys import exit
 import random
 
+def display_score():
+    # get_ticks is number of clocks
+    # after div by 1k that make seconds
+    current_time = int(pygame.time.get_ticks()/1000) - start_time
+    # f'{current_time}' to change current_time to string
+    # (64,64,64) is the color (R,B,G)
+    score = font.render(f'Score: {current_time}' , False,(64,64,64))
+    # score place in the screen
+    score_Index = score.get_rect(center=(x/2, 50))
+    screen.blit(score, score_Index)
+
 pygame.init()
 
 # Screen
@@ -25,8 +36,8 @@ ground = pygame.image.load('images/background/ground.png').convert()#ground
 font = pygame.font.Font('font/Pixeltype.ttf', 20)#text
 
 ground_index = ground.get_rect(bottomleft=(0, y))# ground index + info folder about 'bottomleft'
-text = font.render('Osama shalabi',False,'Black')# text style
-
+score = font.render('Osama shalabi',False,'Black')# text style
+score_index = score.get_rect(center=(x/2,50))
 
 # load bird :birdDown,birdUp
 bird_down = pygame.image.load('images/bird/bird_down.png').convert_alpha()
@@ -71,6 +82,11 @@ for i in range(0,4):
     pillar_up_index.append(start_up.copy())
     start_up.x+=250+pirral_x/4
 
+# to let the bird fly when there event
+bird_gravity = 0
+# the game avtive flag
+game_active = True
+start_time = 0
 
 while True:
     for event in pygame.event.get():
@@ -78,63 +94,83 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-        # if event.type == pygame
+        # if game run , then we have events
+        if game_active:
+            # mouse or space click , let the bird fly
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                bird_gravity -= 5
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    bird_gravity -= 15
+        # to let the game active again just press L_SPACE
+        else:
+            if event. type == pygame. KEYDOWN and event. key == pygame. K_SPACE:
+                game_active =True
+                # give start_time number to reset the score time
+                start_time = int(pygame.time.get_ticks()/1000)
 
+    if game_active:
+        # use sky,ground,text,bird,pillar
+        screen.blit(sky, (0, 0))
+        screen.blit(ground, ground_index)
+        # background for the score:
+        pygame.draw.rect(screen, 'Pink', score_index)
+        pygame.draw.rect(screen, 'Pink', score_index, 10)
+        # screen.blit(score, score_index)
+        display_score()
 
-    # use sky,ground,text,bird,pillar
-    screen.blit(sky, (0,0))
-    screen.blit(ground, ground_index)
-    screen.blit(text,(0,100))
-    screen.blit(bird_down,bird_index)#down
-    # screen.blit(bird_up,bird_index)#up
+        # display the pirllar and the space moving in y 70-400 = 370 random number
+        for i in range(0, 4):
+            screen.blit(pillar_down, pillar_down_index[i])
+            screen.blit(pillar_up, pillar_up_index[i])
 
+        # 2 commits for no one:
+        # -useless loop ,but y know:...
+        # -for down,up in zip(pillar_down_index,pillar_up_index):
 
-    # display the pirllar and the space moving in y 70-400 = 370 random number
-    for i in range(0, 4):
-        screen.blit(pillar_down, pillar_down_index[i])
-        screen.blit(pillar_up, pillar_up_index[i])
+        # pillar shift decrease
+        for i in range(0, 4):
+            pillar_down_index[i].x -= 4
+            pillar_up_index[i].x -= 4
 
-    # 2 commits for no one:
-    # -useless loop ,but y know:...
-    # -for down,up in zip(pillar_down_index,pillar_up_index):
+        # restart the pillars when leave the screen
+        for i in range(0, 4):
+            s = random.randint(70, 320)
+            if pillar_down_index[i].x <= 0 - pirral_x / 2:
+                pillar_down_index[i].bottom = s
+                pillar_down_index[i].x = 1000
+                # pillar_down_index[i].y += s
 
-    # pillar shift decrease
-    for i in range(0,4):
-        pillar_down_index[i].x-=4
-        pillar_up_index[i].x-=4
+            if pillar_up_index[i].x <= 0 - pirral_x / 2:
+                pillar_up_index[i].y = s + 120
+                pillar_up_index[i].x = 1000
+                # pillar_up_index[i].y += s
 
-    # restart the pillars when leave the screen
-    for i in range(0,4):
-        s = random.randint(70, 320)
-        if pillar_down_index[i].x <= 0-pirral_x/2:
-            pillar_down_index[i].bottom= s
-            pillar_down_index[i].x=1000
-            # pillar_down_index[i].y += s
+        # if happen colliderect
+        # for i in range(0, 4):
+        #     # colliderect fun return 1 if happen hit or ..
+        #     if bird_index.colliderect(pillar_down_index[i]) or bird_index.colliderect(pillar_up_index[i]):
+        #         print('ddd')
 
-        if pillar_up_index[i].x <= 0-pirral_x/2:
-            pillar_up_index[i].y = s+120
-            pillar_up_index[i].x=1000
-            # pillar_up_index[i].y += s
+        bird_gravity += 1
+        bird_index.y += bird_gravity
+        # if bird touch the ground:
+        if bird_index.bottom >= ground_index.top: bird_index.bottom = ground_index.top
+        screen.blit(bird_down, bird_index)  # down
+        # screen.blit(bird_up,bird_index)#up
 
+        # if happen colliderect
+        for i in range(0, 4):
+            # if happen collision between bird and pillars or ground
+            if bird_index.colliderect(pillar_down_index[i]) or\
+                    bird_index.colliderect(pillar_up_index[i]) or\
+                    bird_index.bottom >= ground_index.top:
+                # stop the game, when there are no more frames to display
+                game_active = False
+    else:
+        screen.fill((94, 129, 162))
 
-    # if happen colliderect
-    for i in range(0, 4):
-        # colliderect fun return 1 if happen hit or ..
-        if bird_index.colliderect(pillar_down_index[i]) or bird_index.colliderect(pillar_up_index[i]):
-            print('ddd')
-
-
-
-
-
-
-
-    # bird_index.y+=6
-
-#     if snail_rect.right <=0: snail_rect.x=800
-#
-#     screen.blit(snail_surf,snail_rect)
-#     screen.blit(player_surf, player_rect)
+    
 
 
     pygame.display.update()#to display the frames and new events
