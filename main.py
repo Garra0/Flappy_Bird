@@ -1,3 +1,6 @@
+# name : osama amjad shalabi
+# ID : 144844
+
 # imports
 import pygame
 from sys import exit
@@ -28,6 +31,7 @@ def the_bird_died():
     # score place in the screen
     message_index2 = message.get_rect(center=(x / 2 - 20, y / 2 + 60))
     screen.blit(message2, message_index2)
+
 
 pygame.init()
 
@@ -195,7 +199,7 @@ def display_inActive():
             pillar_down_index[i].bottom = s
             pillar_down_index[i].x = 1000
             # pillar_down_index[i].y += s
-            if game_score % 35 == 0:
+            if game_score % 40 == 0:
                 add_flag = True
                 add_heart_index.x = 1000
                 add_heart_index.y = s + 65
@@ -281,13 +285,10 @@ while True:
             # if game run , then we have events
             if game_active:
                 # mouse or space click , let the bird fly
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    bird_gravity -= 7
-                    bird_flying = True
-                    bird_flaying_sound.play()
-                    # when use space and the bird not above the screen
-                if event.type == pygame.KEYDOWN and bird_index.top > sky_index.top:
-                    if event.key == pygame.K_SPACE:
+                # when use space and the bird not above the screen
+                if (event.type == pygame.KEYDOWN and bird_index.top > sky_index.top) or \
+                        event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.key == pygame.K_SPACE or event.type == pygame.MOUSEBUTTONDOWN:
                         bird_gravity -= 7
                         bird_flying = True
                         bird_flaying_sound.play()
@@ -346,7 +347,7 @@ while True:
                 # f is true , if we join this elif the heart count update
                 # in the next loop it's going join the if hearts_count > 1 and f
                 # because the f true and count back to 3
-                # then i will close f flag..
+                # then i will close f flag...
                 f = False
                 # reset the game
                 RoundـReEquipment()
