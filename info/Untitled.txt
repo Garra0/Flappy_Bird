@@ -1,2 +1,5 @@
 images:
 https://www.hiclipart.com
+
+sounds:
+https://mixkit.co/free-sound-effects/
