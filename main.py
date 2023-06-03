@@ -152,6 +152,8 @@ bird_died_sound = pygame.mixer.Sound('sounds/bird_deid.wav')
 bird_flaying_sound = pygame.mixer.Sound('sounds/flying_sound.wav')
 # game_sound = pygame.mixer.Sound('sounds/game_sound.wav')
 game_over = pygame.mixer.Sound('sounds/game_over.wav')
+heart_eat = pygame.mixer.Sound('sounds/heart_eat.wav')
+
 # game_sound.play(-1)
 
 
@@ -193,7 +195,7 @@ def display_inActive():
             pillar_down_index[i].bottom = s
             pillar_down_index[i].x = 1000
             # pillar_down_index[i].y += s
-            if game_score % 5 == 0:
+            if game_score % 35 == 0:
                 add_flag = True
                 add_heart_index.x = 1000
                 add_heart_index.y = s + 65
@@ -318,6 +320,7 @@ while True:
             if bird_index.colliderect(add_heart_index) and add_flag:
                 add_flag = False
                 hearts_count += 1
+                heart_eat.play()
                 add_heart_index.x -= 1000
             for i in range(0, 4):
                 # if happen collision between bird and pillars or ground
